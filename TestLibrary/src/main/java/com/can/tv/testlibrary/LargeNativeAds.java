@@ -52,12 +52,19 @@ public class LargeNativeAds {
     String bgColor, textColor;
 
 
-    public LargeNativeAds(Context context, String packageName, String appId, String gNativeId, String fNativeId) {
+    public LargeNativeAds(Context context, String packageName, String appId, String gNativeId, String fNativeId, int adsPriority, int qurekaPriority, boolean adsOnOff, boolean largeOnOff, boolean qurekaOnOff, String bgColor, String textColor) {
         this.context = context;
         this.packageName = packageName;
         this.appId = appId;
         this.gNativeId = gNativeId;
         this.fNativeId = fNativeId;
+        this.adsPriority = adsPriority;
+        this.qurekaPriority = qurekaPriority;
+        this.adsOnOff = adsOnOff;
+        this.largeOnOff = largeOnOff;
+        this.qurekaOnOff = qurekaOnOff;
+        this.bgColor = bgColor;
+        this.textColor = textColor;
     }
 
     void callAPI(){
