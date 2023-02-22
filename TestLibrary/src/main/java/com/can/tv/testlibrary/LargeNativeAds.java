@@ -3,9 +3,7 @@ package com.can.tv.testlibrary;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -13,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 
@@ -48,13 +45,19 @@ public class LargeNativeAds {
     Context context;
     String packageName;
     String appId;
+    String gNativeId;
+    String fNativeId;
+    int adsPriority, qurekaPriority;
+    boolean adsOnOff, largeOnOff, qurekaOnOff;
+    String bgColor, textColor;
 
 
-    public LargeNativeAds(Context context, String packageName, String appId) {
+    public LargeNativeAds(Context context, String packageName, String appId, String gNativeId, String fNativeId) {
         this.context = context;
         this.packageName = packageName;
         this.appId = appId;
-        callAPI();
+        this.gNativeId = gNativeId;
+        this.fNativeId = fNativeId;
     }
 
     void callAPI(){
@@ -157,7 +160,7 @@ public class LargeNativeAds {
     private static String ad_type;
 
     public void loadNativeAds(Activity activity) {
-        switch (PowerPreference.getDefaultFile().getInt(Constant.ADS_PRIORITY, 0)) {
+        switch (adsPriority) {
             case 0:
                 loadGoogleAds(activity);
                 break;
@@ -168,9 +171,9 @@ public class LargeNativeAds {
     }
 
     public void loadGoogleAds(Activity activity) {
-        final String nativeAdstr = PowerPreference.getDefaultFile().getString(Constant.ADMOB_NATIVE_ID);
+//        final String nativeAdstr = PowerPreference.getDefaultFile().getString(Constant.ADMOB_NATIVE_ID);
 
-        AdLoader.Builder builder = new AdLoader.Builder(activity, nativeAdstr);
+        AdLoader.Builder builder = new AdLoader.Builder(activity, gNativeId);
         builder.forNativeAd(natives -> {
 
             gNativeAd.clear();
@@ -193,7 +196,7 @@ public class LargeNativeAds {
                 Log.e(Constant.adsLog, "loadNativeAds failed" + errorCode.toString());
                 gNativeAd.clear();
 
-                switch (PowerPreference.getDefaultFile().getInt(Constant.ADS_PRIORITY, 0)) {
+                switch (adsPriority) {
                     case 0:
                         loadFbAds(activity);
                         break;
@@ -208,8 +211,8 @@ public class LargeNativeAds {
     }
 
     public void loadFbAds(Activity activity) {
-        final String nativeAd = PowerPreference.getDefaultFile().getString(Constant.FB_NATIVE_ID);
-        final com.facebook.ads.NativeAd fbnativeAd = new com.facebook.ads.NativeAd(activity, nativeAd);
+//        final String nativeAd = PowerPreference.getDefaultFile().getString(Constant.FB_NATIVE_ID);
+        final com.facebook.ads.NativeAd fbnativeAd = new com.facebook.ads.NativeAd(activity, fNativeId);
 
         fbnativeAd.loadAd(fbnativeAd.buildLoadAdConfig().withAdListener(new NativeAdListener() {
             @Override
@@ -219,7 +222,7 @@ public class LargeNativeAds {
 
             @Override
             public void onError(Ad ad, AdError adError) {
-                switch (PowerPreference.getDefaultFile().getInt(Constant.ADS_PRIORITY, 0)) {
+                switch (adsPriority) {
                     case 0:
                         break;
                     case 1:
@@ -268,7 +271,7 @@ public class LargeNativeAds {
         FrameLayout nativeAdLayout = getFrameLayout(activity, dialog);
         TextView adSpace = getTextLayout(activity, dialog);
 
-        switch (PowerPreference.getDefaultFile().getInt(Constant.ADS_PRIORITY, 0)) {
+        switch (adsPriority) {
             case 0:
                 showGoogleAds(activity, dialog, nativeAdLayout, adSpace);
                 break;
@@ -278,7 +281,7 @@ public class LargeNativeAds {
         }
     }
 
-    public void showNativeAds(Activity activity, Dialog dialog, FrameLayout nativeAdLayout, TextView adSpace) {
+/*    public void showNativeAds(Activity activity, Dialog dialog, FrameLayout nativeAdLayout, TextView adSpace) {
 //        FrameLayout nativeAdLayout = getFrameLayout(activity, dialog);
 //        TextView adSpace = getTextLayout(activity, dialog);
 
@@ -290,14 +293,14 @@ public class LargeNativeAds {
                 showFbAds(activity, dialog, nativeAdLayout, adSpace);
                 break;
         }
-    }
+    }*/
 
 
     public void showGoogleAds(Activity activity, Dialog dialog, FrameLayout nativeAdLayout, TextView adSpace) {
 
         LinearLayout adView = null;
 
-        if (PowerPreference.getDefaultFile().getBoolean(Constant.ADS_ON_OFF, true) && PowerPreference.getDefaultFile().getBoolean(Constant.IS_LARGE_NATIVE_AD, true)) {
+        if (adsOnOff && largeOnOff) {
 
             if (gNativeAd.size() > 0) {
 
@@ -310,9 +313,9 @@ public class LargeNativeAds {
                     TextView ad_headline = adView.findViewById(R.id.ad_headline);
                     TextView ad_body = adView.findViewById(R.id.ad_body);
 
-                    cardView.setCardBackgroundColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_BG_COLOR, Constant.NativeDefultColor)));
-                    ad_body.setTextColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_HEAD_TEXT_COLOR)));
-                    ad_headline.setTextColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_HEAD_TEXT_COLOR)));
+                    cardView.setCardBackgroundColor(Color.parseColor(bgColor));
+                    ad_body.setTextColor(Color.parseColor(textColor));
+                    ad_headline.setTextColor(Color.parseColor(textColor));
 
 //                    if (PowerPreference.getDefaultFile().getBoolean(Constant.HomeNativeBackgroundColorOnOff, true)) {
 //                        cardView.setCardBackgroundColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NativeBackgroundColor, Constant.NativeDefultColor)));
@@ -337,7 +340,7 @@ public class LargeNativeAds {
                 loadNativeAds(activity);
 
             } else {
-                switch (PowerPreference.getDefaultFile().getInt(Constant.ADS_PRIORITY, 0)) {
+                switch (adsPriority) {
                     case 0:
                         showFbAds(activity, dialog, nativeAdLayout, adSpace);
                         break;
@@ -357,7 +360,7 @@ public class LargeNativeAds {
 
         LinearLayout adView = null;
 
-        if (PowerPreference.getDefaultFile().getBoolean(Constant.ADS_ON_OFF, true) && PowerPreference.getDefaultFile().getBoolean(Constant.IS_LARGE_NATIVE_AD, true)) {
+        if (adsOnOff && largeOnOff) {
 
             if (fbNativeAd.size() > 0) {
 
@@ -371,9 +374,9 @@ public class LargeNativeAds {
                     TextView ad_headline = adView.findViewById(R.id.ad_headline);
                     TextView ad_body = adView.findViewById(R.id.ad_body);
 
-                    cardView.setCardBackgroundColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_BG_COLOR, Constant.NativeDefultColor)));
-                    ad_body.setTextColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_HEAD_TEXT_COLOR)));
-                    ad_headline.setTextColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_HEAD_TEXT_COLOR)));
+                    cardView.setCardBackgroundColor(Color.parseColor(bgColor));
+                    ad_body.setTextColor(Color.parseColor(textColor));
+                    ad_headline.setTextColor(Color.parseColor(textColor));
 
 
 //                    if (PowerPreference.getDefaultFile().getBoolean(Constant.HomeNativeBackgroundColorOnOff, true)) {
@@ -398,7 +401,7 @@ public class LargeNativeAds {
                 loadNativeAds(activity);
 
             } else {
-                switch (PowerPreference.getDefaultFile().getInt(Constant.ADS_PRIORITY, 0)) {
+                switch (adsPriority) {
                     case 0:
                         loadNativeAds(activity);
                         showQurekaAds(activity, dialog, adView, nativeAdLayout, adSpace);
@@ -415,7 +418,7 @@ public class LargeNativeAds {
     }
 
     public void showQurekaAds(Activity activity, Dialog dialog, LinearLayout adView, FrameLayout nativeAdLayout, TextView adSpace) {
-        if (PowerPreference.getDefaultFile().getBoolean(Constant.QUREKA_ON_OFF, true)) {
+        if (qurekaOnOff) {
 
             if (dialog != null) {
                 adView = (LinearLayout) activity.getLayoutInflater().inflate(R.layout.qureka_native_dialog, null);
@@ -426,9 +429,9 @@ public class LargeNativeAds {
                 TextView ad_headline = adView.findViewById(R.id.ad_headline);
                 TextView ad_body = adView.findViewById(R.id.ad_body);
 
-                cardView.setCardBackgroundColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_BG_COLOR, Constant.NativeDefultColor)));
-                ad_body.setTextColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_HEAD_TEXT_COLOR)));
-                ad_headline.setTextColor(Color.parseColor(PowerPreference.getDefaultFile().getString(Constant.NATIVE_HEAD_TEXT_COLOR)));
+                cardView.setCardBackgroundColor(Color.parseColor(bgColor));
+                ad_body.setTextColor(Color.parseColor(textColor));
+                ad_headline.setTextColor(Color.parseColor(textColor));
 
 
 //                if (PowerPreference.getDefaultFile().getBoolean(Constant.HomeNativeBackgroundColorOnOff, true)) {
@@ -444,8 +447,8 @@ public class LargeNativeAds {
             ImageView imageViewBG = adView.findViewById(R.id.qurekaAds);
             ImageView imageViewGif = adView.findViewById(R.id.gif_inter_round);
 
-            int prio = PowerPreference.getDefaultFile().getInt(Constant.QUREKA_PRIORITY);
-            if(prio == 0){
+//            int prio = PowerPreference.getDefaultFile().getInt(Constant.QUREKA_PRIORITY);
+            if(qurekaPriority == 0){
                 setQureka(activity, imageViewMain, imageViewBG, imageViewGif, Constant.ADS_NORMAL);
             }else{
                 setWebify(activity, imageViewMain, imageViewBG, imageViewGif, Constant.ADS_NORMAL);
@@ -649,7 +652,7 @@ public class LargeNativeAds {
 
 
     public void showNativeListAds(Activity activity, FrameLayout nativeAd, TextView adSpace) {
-        switch (PowerPreference.getDefaultFile().getInt(Constant.ADS_PRIORITY, 0)) {
+        switch (adsPriority) {
             case 0:
                 showGoogleAds(activity, null, nativeAd, adSpace);
                 break;
