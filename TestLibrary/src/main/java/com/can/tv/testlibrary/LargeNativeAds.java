@@ -274,7 +274,7 @@ public class LargeNativeAds {
     }
 
 
-    public void showNativeAds(Activity activity, Dialog dialog) {
+/*    public void showNativeAds(Activity activity, Dialog dialog) {
         FrameLayout nativeAdLayout = getFrameLayout(activity, dialog);
         TextView adSpace = getTextLayout(activity, dialog);
 
@@ -286,9 +286,9 @@ public class LargeNativeAds {
                 showFbAds(activity, dialog, nativeAdLayout, adSpace);
                 break;
         }
-    }
+    }*/
 
-/*    public void showNativeAds(Activity activity, Dialog dialog, FrameLayout nativeAdLayout, TextView adSpace) {
+    public void showNativeAds(Activity activity, Dialog dialog, FrameLayout nativeAdLayout, TextView adSpace) {
 //        FrameLayout nativeAdLayout = getFrameLayout(activity, dialog);
 //        TextView adSpace = getTextLayout(activity, dialog);
 
@@ -300,7 +300,7 @@ public class LargeNativeAds {
                 showFbAds(activity, dialog, nativeAdLayout, adSpace);
                 break;
         }
-    }*/
+    }
 
 
     public void showGoogleAds(Activity activity, Dialog dialog, FrameLayout nativeAdLayout, TextView adSpace) {
