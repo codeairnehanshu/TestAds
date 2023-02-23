@@ -42,7 +42,7 @@ import java.util.Objects;
 
 public class LargeNativeAds {
 
-    Context context;
+
     String gNativeId;
     String fNativeId;
     int adsPriority, qurekaPriority;
@@ -50,8 +50,7 @@ public class LargeNativeAds {
     String bgColor, textColor;
 
 
-    public LargeNativeAds(Context context, String gNativeId, String fNativeId, int adsPriority, int qurekaPriority, boolean adsOnOff, boolean largeOnOff, boolean qurekaOnOff, String bgColor, String textColor) {
-        this.context = context;
+    public LargeNativeAds(String gNativeId, String fNativeId, int adsPriority, int qurekaPriority, boolean adsOnOff, boolean largeOnOff, boolean qurekaOnOff, String bgColor, String textColor) {
         this.gNativeId = gNativeId;
         this.fNativeId = fNativeId;
         this.adsPriority = adsPriority;
