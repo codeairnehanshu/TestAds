@@ -43,8 +43,6 @@ import java.util.Objects;
 public class LargeNativeAds {
 
     Context context;
-    String packageName;
-    String appId;
     String gNativeId;
     String fNativeId;
     int adsPriority, qurekaPriority;
@@ -52,10 +50,8 @@ public class LargeNativeAds {
     String bgColor, textColor;
 
 
-    public LargeNativeAds(Context context, String packageName, String appId, String gNativeId, String fNativeId, int adsPriority, int qurekaPriority, boolean adsOnOff, boolean largeOnOff, boolean qurekaOnOff, String bgColor, String textColor) {
+    public LargeNativeAds(Context context, String gNativeId, String fNativeId, int adsPriority, int qurekaPriority, boolean adsOnOff, boolean largeOnOff, boolean qurekaOnOff, String bgColor, String textColor) {
         this.context = context;
-        this.packageName = packageName;
-        this.appId = appId;
         this.gNativeId = gNativeId;
         this.fNativeId = fNativeId;
         this.adsPriority = adsPriority;
@@ -67,100 +63,6 @@ public class LargeNativeAds {
         this.textColor = textColor;
     }
 
-    void callAPI(){
-        Map<String, String> data = new HashMap<>();
-        data.put("app_package",packageName);
-        data.put("app_id",appId);
-        ProServerHelper proServerHelper = new ProServerHelper(context, Request.Method.POST, new ResponseListener() {
-            @Override
-            public void processFinish(String response) {
-                Log.e("TAG", "processFinish: " + response );
-                Gson gson = new Gson();
-
-                Data objData = gson.fromJson(response, Data.class);
-
-                if(objData == null){
-//                    Toast.makeText(SplashActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(!objData.error && objData.ad != null){
-
-                    PowerPreference.getDefaultFile().putInt(Constant.ADS_PRIORITY, objData.ad.ads_priority);
-                    PowerPreference.getDefaultFile().putInt(Constant.SERVER_INTER_COUNT, objData.ad.server_inter_count);
-                    PowerPreference.getDefaultFile().putInt(Constant.SERVER_BACK_COUNT, objData.ad.server_back_count);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.IS_SPLASH_APP_OPEN, objData.ad.is_splash_app_open);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.IS_BACK_ADS, objData.ad.is_back_ads);
-                    PowerPreference.getDefaultFile().putString(Constant.POLICY_LINK, objData.ad.policy_link);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.IS_BANNER_AD, objData.ad.is_banner_ads);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.IS_MINI_NATIVE_AD, objData.ad.is_mini_native_ad);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.IS_LARGE_NATIVE_AD, objData.ad.is_large_native_ad);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.ADS_ON_OFF, objData.ad.ads_on_off);
-                    PowerPreference.getDefaultFile().putString(Constant.ADMOB_INTER_ID, objData.ad.admob_inter_id);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.INTER_LOADER, objData.ad.inter_loder);
-                    PowerPreference.getDefaultFile().putInt(Constant.INTER_LOADER_SECONDS, objData.ad.inter_loder_second);
-                    PowerPreference.getDefaultFile().putString(Constant.ADMOB_BANNER_ID, objData.ad.admob_banner_id);
-                    PowerPreference.getDefaultFile().putString(Constant.ADMOB_NATIVE_ID, objData.ad.admob_native_id);
-                    PowerPreference.getDefaultFile().putString(Constant.ADMOB_APP_OPEN_ID, objData.ad.admob_app_open_id);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.IS_REWARDED_AD, objData.ad.is_rewared_on);
-                    PowerPreference.getDefaultFile().putString(Constant.ADMOB_REWARDED_ID, objData.ad.admob_rewarded_id);
-                    PowerPreference.getDefaultFile().putString(Constant.FB_INTER_ID, objData.ad.fb_inter_id);
-                    PowerPreference.getDefaultFile().putString(Constant.FB_BANNER_ID, objData.ad.fb_banner_id);
-                    PowerPreference.getDefaultFile().putString(Constant.FB_NATIVE_ID, objData.ad.fb_native_id);
-                    PowerPreference.getDefaultFile().putString(Constant.NATIVE_BG_COLOR, objData.ad.native_background_color);
-                    PowerPreference.getDefaultFile().putString(Constant.NATIVE_HEAD_TEXT_COLOR, objData.ad.native_body_headline_text_color);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.FULL_SCREEN, objData.ad.full_screen_on_off);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.CUSTOM_ADS_EXIT, objData.ad.exit_inter_on_off);
-                    PowerPreference.getDefaultFile().putString(Constant.APP_VERSION, objData.ad.app_version);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.IS_FORCE, objData.ad.is_force);
-                    PowerPreference.getDefaultFile().putBoolean(Constant.QUREKA_ON_OFF, objData.ad.qureka_on_off);
-                    PowerPreference.getDefaultFile().putString(Constant.QUREKA_AD_LINK, objData.ad.qureka_ad_link);
-                    PowerPreference.getDefaultFile().putInt(Constant.QUREKA_PRIORITY, objData.ad.qureka_priority);
-                    PowerPreference.getDefaultFile().putString(Constant.WEBIFY_AD_LINK, objData.ad.webify_link);
-
-
-//                    if(objData.ad.ads_on_off){
-//                        new InterAds().loadInterAds(SplashActivity.this);
-//                        new BackInterAds().loadInterAds(SplashActivity.this);
-//                        new LargeNativeAds().loadNativeAds(SplashActivity.this);
-////                        new MiniNativeAds().loadNativeAds(SplashActivity.this);
-//                        if(objData.ad.is_splash_app_open){
-//                            new NewOpenAds().loadOpenAd(SplashActivity.this);
-//                        }
-//                        new OpenAds().loadOpenAd();
-//                    }
-//
-//                    if(Double.parseDouble(objData.ad.app_version) > Double.parseDouble(versionName)){
-//                        binding.cvUpdate.setVisibility(View.VISIBLE);
-//                        if(objData.ad.is_force){
-//                            binding.btnSkip.setVisibility(View.GONE);
-//                        }else{
-//                            binding.btnSkip.setVisibility(View.VISIBLE);
-//                        }
-//                        binding.btnUpdate.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                binding.cvUpdate.setVisibility(View.GONE);
-//                                startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())),9);
-//                            }
-//                        });
-//
-//                        binding.btnSkip.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                binding.cvUpdate.setVisibility(View.GONE);
-//                                gotoSkip();
-//                            }
-//                        });
-//                    }else{
-//                        gotoSkip();
-//                    }
-                }
-            }
-        },data);
-        proServerHelper.execute(Constant.GET_AD_DATA);
-
-    }
 
     private static ArrayList<NativeAd> gNativeAd = new ArrayList<>();
     private static ArrayList<com.facebook.ads.NativeAd> fbNativeAd = new ArrayList<>();
